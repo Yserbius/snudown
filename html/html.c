@@ -239,6 +239,7 @@ rndr_header(struct buf *ob, const struct buf *text, int level, void *opaque)
 static int
 rndr_link(struct buf *ob, const struct buf *link, const struct buf *title, const struct buf *content, void *opaque)
 {
+//??
 	struct html_renderopt *options = opaque;
 
 	if (link != NULL && (options->flags & HTML_SAFELINK) != 0 && !sd_autolink_issafe(link->data, link->size))
