@@ -1,0 +1,3 @@
+[submodule "punycode"]
+	path = punycode
+	url = https://github.com/bnoordhuis/punycode
