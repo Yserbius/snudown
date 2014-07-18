@@ -19,6 +19,7 @@
 
 #include "markdown.h"
 #include "stack.h"
+#include <punycode.h>
 
 #include <assert.h>
 #include <string.h>
@@ -125,6 +126,16 @@ struct sd_markdown {
  * HELPER FUNCTIONS *
  ***************************/
 
+static inline struct buf *
+convert_to_punycode(struct buf* link, size_t start_domain, size_t end_domain){
+   struct buf* returnBuffer;
+   char encodedValue[1024];
+   size_t encodedSize = punycode_encode(link->data+start_domain, link->size - (start_domain + end_domain), 
+                   encodedValue, sizeof(char)*1024);
+   returnBuffer = bufnew(encodedSize);
+   bufput(returnBuffer, encodedValue, sizeof(*encodedValue)*encodedSize);
+
+}
 static inline struct buf *
 rndr_newbuf(struct sd_markdown *rndr, int type)
 {
@@ -776,8 +787,24 @@ char_autolink_www(struct buf *ob, struct sd_markdown *rndr, uint8_t *data, size_
 	if ((link_len = sd_autolink__www(&rewind, link, data, offset, size, 0)) > 0) {
 		link_url = rndr_newbuf(rndr, BUFFER_SPAN);
 		BUFPUTSL(link_url, "http://");
+      size_t domainEnd = 0; 
+      while(link->size > domainEnd && link->data[domainEnd] != '/' && link->data[domainEnd] != '?'&& link->data[domainEnd] != '?'){
+              ++domainEnd;
+      }
+      int i = 0;
+      for(i = 0; i < domainEnd; i++){
+              printf("%c", link->data[i]);
+      }
+      printf("\n");
+      char bufbuf[1024];
+      size_t len = sizeof(bufbuf);
+      size_t encoded = punycode_encode(link->data, link->size, bufbuf, &len);
+      for(i = 0; i <encoded; i++){
+              printf("%c", bufbuf[i]);
+      }
+      printf("\n");
 		bufput(link_url, link->data, link->size);
-
+      
 		ob->size -= rewind;
 		if (rndr->cb.normal_text) {
 			link_text = rndr_newbuf(rndr, BUFFER_SPAN);
