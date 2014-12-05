@@ -5,7 +5,7 @@
 #include "html.h"
 #include "autolink.h"
 
-#define SNUDOWN_VERSION "1.1.6"
+#define SNUDOWN_VERSION "1.2.0"
 
 enum snudown_renderer_mode {
 	RENDERER_USERTEXT = 0,
@@ -50,7 +50,8 @@ static const unsigned int snudown_default_md_flags =
 	MKDEXT_SUPERSCRIPT |
 	MKDEXT_AUTOLINK |
 	MKDEXT_STRIKETHROUGH |
-	MKDEXT_TABLES;
+	MKDEXT_TABLES |
+	MKDEXT_NO_EMAIL_AUTOLINK;
 
 static const unsigned int snudown_default_render_flags =
 	HTML_SKIP_HTML |
@@ -101,6 +102,7 @@ static struct sd_markdown* make_custom_renderer(struct module_state* state,
 	return sd_markdown_new(
 		markdownflags,
 		16,
+		64,
 		&state->callbacks,
 		&state->options
 	);
